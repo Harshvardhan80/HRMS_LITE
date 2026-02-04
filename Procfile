@@ -1,0 +1,1 @@
+web: cd backend && gunicorn hrms_lite.wsgi --log-file -
