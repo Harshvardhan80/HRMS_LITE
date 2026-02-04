@@ -3,33 +3,22 @@ Django settings for hrms_lite project.
 """
 
 from pathlib import Path
+import os
 from decouple import config
 import dj_database_url
 
-# --------------------------------------------------
-# BASE DIR
-# --------------------------------------------------
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --------------------------------------------------
-# SECURITY
-# --------------------------------------------------
-SECRET_KEY = config(
-    'SECRET_KEY',
-    default='django-insecure-change-this-in-production'
-)
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-default-key-change-in-production')
 
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ["*"]  # OK for Railway
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://*.railway.app",
-]
-
-# --------------------------------------------------
-# APPLICATIONS
-# --------------------------------------------------
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,24 +26,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # Third-party
     'rest_framework',
     'corsheaders',
-
-    # Local
     'employees',
 ]
 
-# --------------------------------------------------
-# MIDDLEWARE
-# --------------------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-
     'corsheaders.middleware.CorsMiddleware',
-
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -63,25 +43,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# --------------------------------------------------
-# URLS / WSGI
-# --------------------------------------------------
 ROOT_URLCONF = 'hrms_lite.urls'
 
-WSGI_APPLICATION = 'hrms_lite.wsgi.application'
-
-# --------------------------------------------------
-# TEMPLATES (FRONTEND HTML)
-# --------------------------------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-
-        # 👇 FRONTEND FOLDER
-        'DIRS': [
-            BASE_DIR / 'frontend'
-        ],
-
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -94,9 +61,9 @@ TEMPLATES = [
     },
 ]
 
-# --------------------------------------------------
-# DATABASE
-# --------------------------------------------------
+WSGI_APPLICATION = 'hrms_lite.wsgi.application'
+
+# Database
 DATABASES = {
     'default': dj_database_url.config(
         default=config('DATABASE_URL', default='sqlite:///db.sqlite3'),
@@ -104,9 +71,7 @@ DATABASES = {
     )
 }
 
-# --------------------------------------------------
-# PASSWORD VALIDATION
-# --------------------------------------------------
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -122,38 +87,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# --------------------------------------------------
-# INTERNATIONALIZATION
-# --------------------------------------------------
+# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# --------------------------------------------------
-# STATIC FILES (CSS / JS)
-# --------------------------------------------------
-STATIC_URL = '/static/'
-
-# 👇 FRONTEND STATIC FILES
-STATICFILES_DIRS = [
-    BASE_DIR / 'frontend'
-]
-
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-STATICFILES_STORAGE = (
-    'whitenoise.storage.CompressedManifestStaticFilesStorage'
-)
-
-# --------------------------------------------------
-# DEFAULT PRIMARY KEY
-# --------------------------------------------------
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# --------------------------------------------------
-# CORS
-# --------------------------------------------------
+# CORS settings
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
     default='http://localhost:3000,http://127.0.0.1:3000'
@@ -161,9 +109,7 @@ CORS_ALLOWED_ORIGINS = config(
 
 CORS_ALLOW_CREDENTIALS = True
 
-# --------------------------------------------------
-# DRF
-# --------------------------------------------------
+# REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
